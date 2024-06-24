@@ -1,0 +1,27 @@
+name: pushenAufAzureRepo
+
+on:
+  push:
+    branches:
+      - main  # Passe diesen Branch-Namen an, falls nötig
+
+jobs:
+  copy-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Git
+      run: |
+        git config --global user.name "JonasPollokZweitag"
+        git config --global user.email "jonas.pollok@zweitag.de"
+
+    - name: Get the last commit
+      id: last_commit
+      run: echo "::set-output name=commit::$(git rev-parse HEAD)"
+
+    - name: Force push to Azure DevOps
+      run: |
+        git push --mirror https://waiv@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
