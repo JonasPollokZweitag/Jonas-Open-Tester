@@ -16,8 +16,8 @@ jobs:
     - name: Reinitialize Git repository
       run: |
         git init
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "JonasPollokZweitag"
+        git config --global user.email "jonas.pollok@zweitag.de"
         git add .
         git commit -m "Reinitialize repository"
     - name: push repository
