@@ -23,5 +23,9 @@ jobs:
       run: echo "::set-output name=commit::$(git rev-parse HEAD)"
 
     - name: Force push to Azure DevOps
+      env:
+        AZURE_REPO_URL: https://waiv@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
+        AZURE_PAT: ${{ secrets.AZURE_PAT }}  # Stelle sicher, dass du ein Personal Access Token (PAT) als Secret in deinem GitHub-Repository hinzufügst
       run: |
-        git push --mirror https://waiv@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
+        git remote add azure https://waiv:${{ secrets.AZURE_PAT }}@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
+        git push azure ${{ steps.last_commit.outputs.commit }}:refs/heads/main --force
