@@ -4,24 +4,26 @@ on:
   push:
     branches:
       - main  # Passe diesen Branch-Namen an, falls nötig
-
 jobs:
-  copy-commit:
+  reinitialize-repo:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-
-    - name: Set up Git
+    - name: Remove .git directory
       run: |
-        git config --global user.name "JonasPollokZweitag"
-        git config --global user.email "jonas.pollok@zweitag.de"
-
-    - name: Force push to Azure DevOps
+        rm -rf .git
+    - name: Reinitialize Git repository
+      run: |
+        git init
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit -m "Reinitialize repository"
+    - name: push repository
       env:
         AZURE_REPO_URL: https://waiv@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
-        AZURE_PAT: ${{ secrets.AZURE_PAT }}  # Stelle sicher, dass du ein Personal Access Token (PAT) als Secret in deinem GitHub-Repository hinzufügst
+        AZURE_PAT: ${{ secrets.AZURE_PAT }}
       run: |
         git remote add azure https://waiv:${{ secrets.AZURE_PAT }}@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
-        git push azure ${{ steps.last_commit.outputs.commit }}:refs/heads/main --force
+        git push --mirror https://waiv@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
