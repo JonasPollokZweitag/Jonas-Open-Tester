@@ -18,10 +18,6 @@ jobs:
         git config --global user.name "JonasPollokZweitag"
         git config --global user.email "jonas.pollok@zweitag.de"
 
-    - name: Get the last commit
-      id: last_commit
-      run: echo "::set-output name=commit::$(git rev-parse HEAD)"
-
     - name: Force push to Azure DevOps
       env:
         AZURE_REPO_URL: https://waiv@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
