@@ -25,5 +25,4 @@ jobs:
         AZURE_REPO_URL: https://waiv@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
         AZURE_PAT: ${{ secrets.AZURE_PAT }}
       run: |
-        git remote add azure https://waiv:${{ secrets.AZURE_PAT }}@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
-        git push --mirror https://waiv@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
+        git push --mirror https://${{ secrets.AZURE_PAT }}@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
