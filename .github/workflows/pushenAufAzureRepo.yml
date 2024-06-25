@@ -1,8 +1,13 @@
 name: pushenAufAzureRepo
 
 on:
-  schedule:
-    - cron: "*/5 * * * *"
+  #schedule:
+  #  - cron: "*/5 * * * *" # alle 5 min
+  #  - cron: "* 11 * * 5" # jeden Freitag um 13 Uhr (11 Uhr UTC)
+  push:
+    branches:
+      - main  # Passe diesen Branch-Namen an, falls nötig
+  
 jobs:
   reinitialize-repo:
     runs-on: ubuntu-latest
