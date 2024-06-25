@@ -2,7 +2,7 @@ name: pushenAufAzureRepo
 
 on:
   schedule:
-    - cron: '15 11 * * 2'
+    - cron: "*/5 * * * *"
 jobs:
   reinitialize-repo:
     runs-on: ubuntu-latest
