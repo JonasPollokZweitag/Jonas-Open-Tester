@@ -9,7 +9,7 @@ on:
       - main  # Passe diesen Branch-Namen an, falls nötig
   
 jobs:
-  reinitialize-repo:
+  reinitialize-repo-with-pipeline-file:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -17,6 +17,25 @@ jobs:
     - name: Remove .git directory
       run: |
         rm -rf .git
+
+    - name: Create azure-pipelines.yml
+      run: |
+        echo "trigger:" > azure-pipelines.yml
+        echo "- master" >> azure-pipelines.yml
+        echo "" >> azure-pipelines.yml
+        echo "pool:" >> azure-pipelines.yml
+        echo "  vmImage: ubuntu-latest" >> azure-pipelines.yml
+        echo "" >> azure-pipelines.yml
+        echo "steps:" >> azure-pipelines.yml
+        echo "" >> azure-pipelines.yml
+        echo "- task: AdvancedSecurity-Codeql-Init@1" >> azure-pipelines.yml
+        echo "  inputs:" >> azure-pipelines.yml
+        echo "    languages: 'python'" >> azure-pipelines.yml
+        echo "" >> azure-pipelines.yml
+        echo "- task: AdvancedSecurity-Dependency-Scanning@1" >> azure-pipelines.yml
+        echo "" >> azure-pipelines.yml
+        echo "- task: AdvancedSecurity-Codeql-Analyze@1" >> azure-pipelines.yml
+  
     - name: Reinitialize Git repository
       run: |
         git init
@@ -29,4 +48,4 @@ jobs:
         AZURE_REPO_URL: https://waiv@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
         AZURE_PAT: ${{ secrets.AZURE_PAT }}
       run: |
-        git push --mirror https://${{ secrets.AZURE_PAT }}@dev.azure.com/waiv/waiv/_git/Jonas-Open-Tester.git
+        git push --mirror https://${{ secrets.AZURE_PAT }}@dev.azure.com/waiv/waiv/_git/Import-Test
