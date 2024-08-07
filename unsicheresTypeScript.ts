@@ -1,31 +1,44 @@
-import { createConnection } from 'mysql';
+import express from 'express';
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 
-const connection = createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'password',
-  database: 'testdb'
-});
+const app = express();
+const port = 3000;
 
-connection.connect((err) => {
-  if (err) {
-    console.error('Error connecting to the database:', err);
-    return;
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+// Simulierte Benutzerdatenbank
+const users = {
+  'user1': { password: 'password1', balance: 1000 },
+  'user2': { password: 'password2', balance: 2000 }
+};
+
+// Simulierte Authentifizierung
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  if (users[username] && users[username].password === password) {
+    res.cookie('session', username, { httpOnly: true });
+    res.send('Login successful');
+  } else {
+    res.send('Invalid credentials');
   }
-  console.log('Connected to the database.');
 });
 
-const userInput = "someUserInput' OR '1'='1"; // Simuliert eine SQL-Injektion
+// Unsichere Überweisung, anfällig für CSRF
+app.post('/transfer', (req, res) => {
+  const { to, amount } = req.body;
+  const from = req.cookies.session;
 
-// Unsicherer Code, anfällig für SQL-Injektionen
-const query = `SELECT * FROM users WHERE username = '${userInput}'`;
-
-connection.query(query, (err, results) => {
-  if (err) {
-    console.error('Error executing query:', err);
-    return;
+  if (users[from] && users[to]) {
+    users[from].balance -= parseInt(amount);
+    users[to].balance += parseInt(amount);
+    res.send(`Transferred ${amount} from ${from} to ${to}`);
+  } else {
+    res.send('Invalid transfer');
   }
-  console.log('Query results:', results);
 });
 
-connection.end();
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`);
+});
