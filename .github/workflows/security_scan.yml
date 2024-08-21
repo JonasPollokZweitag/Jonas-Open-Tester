@@ -1,0 +1,37 @@
+name: Security Scan
+on: 
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '0 2 * * 0'  # every sunday at 2am
+jobs:
+ 
+  trivy-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout repository
+      uses: actions/checkout@v4
+
+    - name: install trivy
+      run: |
+        sudo apt-get install wget apt-transport-https gnupg
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+        echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+        sudo apt-get update
+        sudo apt-get install trivy
+
+    - name: run trivy on filesystem
+      if: success() || failure()
+      run: |
+        trivy fs . --exit-code 1 >> trivy_fs_report.txt
+        printf "\n\n---\n\nSecurity report for filesystem in main\n\n---\n"
+        cat trivy_fs_report.txt
+
+    - name: upload trivy fs_report
+      if: success() || failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: trivy_fs_report
+        path: trivy_fs_report.txt
