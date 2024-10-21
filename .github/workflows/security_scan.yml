@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - main
-  schedule:
-    - cron: '0 2 * * 0'  # every sunday at 2am
+  #schedule:
+    #- cron: '0 2 * * 0'  # every sunday at 2am
 jobs:
  
   trivy-scan:
